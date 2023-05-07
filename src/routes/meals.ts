@@ -31,14 +31,14 @@ export async function mealsRoutes(app: FastifyInstance) {
       return unauthorized(reply)
     }
 
-    const meal = await knex('meals')
+    const meals = await knex('meals')
       .where({
         user_id: userId,
         id,
       })
       .select()
 
-    return { meal }
+    return { meal: meals[0] }
   })
 
   app.get('/metrics', async (request, reply) => {
@@ -77,8 +77,10 @@ export async function mealsRoutes(app: FastifyInstance) {
       request.body,
     )
 
+    const id = crypto.randomUUID()
+
     await knex('meals').insert({
-      id: crypto.randomUUID(),
+      id,
       user_id: userId,
       title,
       description,
@@ -86,7 +88,7 @@ export async function mealsRoutes(app: FastifyInstance) {
       is_in_diet: isInDiet,
     })
 
-    return reply.status(201).send()
+    return reply.status(201).send({ id })
   })
 
   app.put('/:id', async (request, reply) => {
@@ -148,6 +150,6 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     await knex('meals').where('id', id).delete('*')
 
-    return reply.status(201).send()
+    return reply.status(200).send()
   })
 }

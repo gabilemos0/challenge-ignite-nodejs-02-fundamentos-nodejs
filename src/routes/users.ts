@@ -31,7 +31,6 @@ export async function usersRoutes(app: FastifyInstance) {
     const { email, password } = createUserBodySchema.parse(request.body)
 
     let sessionId = request.cookies.sessionId
-
     if (!sessionId) {
       sessionId = randomUUID()
 
@@ -60,6 +59,6 @@ export async function usersRoutes(app: FastifyInstance) {
 
     await knex('users').where('id', id).delete('*')
 
-    return reply.status(201).send()
+    return reply.status(200).send()
   })
 }
